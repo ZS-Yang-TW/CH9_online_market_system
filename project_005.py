@@ -1,6 +1,5 @@
 import json
 
-# 引入會員資料
 global user_data
 with open('user_data.json','r') as f:
     user_data = json.load(f)
