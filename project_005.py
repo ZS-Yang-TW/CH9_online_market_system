@@ -2,12 +2,12 @@ import json
 
 # 引入會員資料
 global user_data
-with open('user_data.json','r') as f:
+with open('user_data.json','r', encoding="utf-8") as f:
     user_data = json.load(f)
     
 # 引入商品資料
 global product_list
-with open('product.json','r') as f:
+with open('product.json','r', encoding="utf-8") as f:
     product_list = json.load(f)
 
 global login_status
@@ -42,11 +42,26 @@ def is_valid_email(email:str) -> bool:
 
 # 【系統功能-檢查密碼安全性】
 def is_valid_password(pwd:str) -> bool:
-    """
-    1. 密碼長度需大於8個字元。
-    2. 密碼需包含大小寫字母與數字。
-    """
-    pass
+    
+    has_lower = False
+    for word in pwd:
+        if word.islower():
+            has_lower = True
+    
+    has_upper = False
+    for word in pwd:
+        if word.isupper():
+            has_upper = True
+            
+    has_digit = False
+    for word in pwd:
+        if word.isdigit():
+            has_digit = True
+    
+    if len(pwd) <= 8:
+        return False        
+    
+    return True
      
 # 【系統功能-確認密碼】
 def check_password(username:str, pwd:str) -> bool:
@@ -215,5 +230,12 @@ def main():
         elif user_input == "6":
             show_cart()
 
+# 測試程式碼
 if __name__ == "__main__":
-    main()
+    print(is_valid_password("AmyIsVerySmart555"))
+    print(is_valid_password("StevenCheng1222"))
+    print(is_valid_password("#%%##%%%#123"))
+    print(is_valid_password("0123456789"))
+    print(is_valid_password("qwertyasdfgh"))
+    print(is_valid_password("ABab12"))
+    print(is_valid_password(""))
