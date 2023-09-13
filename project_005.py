@@ -74,13 +74,10 @@ def is_valid_password(pwd: str) -> bool:
     if len(pwd) < 8 :
         return False
 # 【系統功能-確認密碼】
-
-
-def check_password(username: str, pwd: str) -> bool:
-    """
-    根據給予的帳號與密碼，逐項檢查是否與資料集中的帳號與密碼相符。
-    """
-    pass
+def check_password(username:str, pwd:str) -> bool:
+    for user in user_data:
+        if(username == user["username"] and pwd == user["password"]):
+            return True
 
 # 【系統功能-檢查商品是否存在】
 
@@ -161,6 +158,27 @@ def generate_product_info(page_number: int, page_size=10) -> str:
     4. 商品資訊的格式如下：
     |    商品名稱    |  售價  |   折扣  |  剩餘庫存  |        備註        |
     """
+    startIndex = (page_number - 1) * page_size
+    endIndex = startIndex + page_size
+    
+    yield "|    商品名稱    |  售價  |   折扣  |  剩餘庫存  |        備註        |"
+    yield "-"*100
+    for product in product_list[startIndex : endIndex]:
+        name = product['name']
+        price = f"{product['price']}元"
+        discount = product['discount']
+        stock = product['stock']
+        remark = product['remark']
+
+        if discount == 1:
+            discountStr = "　-"
+        elif discount * 100 % 10 == 0:
+            discountStr = f"{int(discount * 10)}折"
+        else:
+             discountStr = f"{int(discount * 100)}折"
+
+        yield f"|{name:{chr(12288)}>8}|{price:>7}|{discount:>9}|{stock:>12}|{remark:{chr(12288)}>10}|"   
+    yield "-"*100
     pass
 
 # 【服務功能[1]-會員註冊】
