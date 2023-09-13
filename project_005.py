@@ -32,7 +32,10 @@ def check_email(email:str) -> bool:
     """
     根據給予的電子郵件，逐項檢查是否與資料集中的電子郵件重複。
     """
-    pass
+    for user in user_data:
+        if user["email"] == email:
+            return True
+    return False
 
 # 【系統功能-檢查電子郵件格式】
 def is_valid_email(email:str) -> bool:
@@ -90,7 +93,10 @@ def check_login(func):
     如果有登入，則執行原函式；如果沒有登入，則顯示「【請先登入】」。
     """
     def wrapper():
-        pass
+        if login_status:
+            func()
+            return
+        print("【請先登入】")
     return wrapper
 
 # 【系統功能-加入購物車】
