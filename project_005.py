@@ -2,13 +2,11 @@ import json
 
 # 引入會員資料
 global user_data
-
 with open('user_data.json','r', encoding="utf-8") as f:
     user_data = json.load(f)
 
 # 引入商品資料
 global product_list
-
 with open('product.json','r', encoding="utf-8") as f:
     product_list = json.load(f)
 
@@ -62,16 +60,27 @@ def is_valid_email(email: str) -> bool:
 
     return True
 # 【系統功能-檢查密碼安全性】
+def is_valid_password(pwd:str) -> bool:
+    if len(pwd) <= 8:
+        return False    
+    
+    has_lower = False
+    for word in pwd:
+        if word.islower():
+            has_lower = True
+    
+    has_upper = False
+    for word in pwd:
+        if word.isupper():
+            has_upper = True
+            
+    has_digit = False
+    for word in pwd:
+        if word.isdigit():
+            has_digit = True    
+    
+    return has_lower and has_upper and has_digit
 
-
-def is_valid_password(pwd: str) -> bool:
-    """
-    1. 密碼長度需大於8個字元。
-    2. 密碼需包含大小寫字母與數字。
-    """
-
-    if len(pwd) < 8 :
-        return False
 # 【系統功能-確認密碼】
 def check_password(username:str, pwd:str) -> bool:
     for user in user_data:
@@ -91,8 +100,6 @@ def is_product(item: str) -> bool:
 
 
 # 【系統功能-檢查商品庫存是否足夠】
-
-
 def is_sufficient(item:str, number:int) -> bool:
     """
     根據給予的商品名稱，逐項檢查是否存在於資料集中。
@@ -120,8 +127,6 @@ def is_sufficient(item:str, number:int) -> bool:
         
 
 # 【功能限制-登入後才能用的項目】
-
-
 def check_login(func):
     """
     此函式為裝飾器，需接收一個函式作為參數。
@@ -138,8 +143,6 @@ def check_login(func):
     return wrapper
 
 # 【系統功能-加入購物車】
-
-
 def add_to_cart(item: str, number: int):
     """
     1. 檢查商品是否存在。如果不存在，則顯示「【我們沒有這個商品喔!】」。
@@ -149,8 +152,6 @@ def add_to_cart(item: str, number: int):
     pass
 
 # 【系統功能-產生商品資訊】
-
-
 def generate_product_info(page_number: int, page_size=10) -> str:
     """
     此函式是一個產生器，根據提供的頁數來產生商品資訊。
