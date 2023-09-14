@@ -7,7 +7,7 @@ with open('user_data.json','r', encoding="utf-8") as f:
 
 # 引入商品資料
 global product_list
-with open('product.json','r', encoding="utf-8") as f:
+with open('product.json','r',encoding='utf-8') as f:
     product_list = json.load(f)
 
 global login_status
@@ -55,31 +55,33 @@ def is_valid_email(email: str) -> bool:
 
 # 【系統功能-檢查密碼安全性】
 def is_valid_password(pwd:str) -> bool:
-    if len(pwd) <= 8:
-        return False    
-
-    has_lower = False
-    for word in pwd:
-        if word.islower():
-            has_lower = True
-    
-    has_upper = False
-    for word in pwd:
-        if word.isupper():
-            has_upper = True
-            
-    has_digit = False
-    for word in pwd:
-        if word.isdigit():
-            has_digit = True    
-    
-    return has_lower and has_upper and has_digit
+    """
+    1. 密碼長度需大於8個字元。
+    2. 密碼需包含大小寫字母與數字。
+    """
+    if len(pwd) < 8 :
+        return False
+    p_upper = False
+    p_lower = False
+    p_digit = False 
+    for p in pwd :
+        if p.isupper():
+            p_upper = True
+        if p.islower():
+            p_lower = True
+        if p.isdigit():
+            p_digit = True 
+    return p_upper and p_lower and p_digit
 
 # 【系統功能-確認密碼】
 def check_password(username:str, pwd:str) -> bool:
-    for user in user_data:
-        if(username == user["username"] and pwd == user["password"]):
+    """
+    根據給予的帳號與密碼，逐項檢查是否與資料集中的帳號與密碼相符。
+    """
+    for data in user_data : 
+        if username == data['username'] and pwd == data['password']:
             return True
+    return False
 
 # 【系統功能-檢查商品是否存在】
 def is_product(item: str) -> bool:
@@ -87,10 +89,9 @@ def is_product(item: str) -> bool:
     根據給予的商品名稱，逐項檢查是否存在於資料集中。
     """
     for product in product_list:
-        if product['name'] == item:
+        if item ==  product['name']:
             return True
     return False
-
 
 # 【系統功能-檢查商品庫存是否足夠】
 def is_sufficient(item:str, number:int) -> bool:
@@ -99,22 +100,19 @@ def is_sufficient(item:str, number:int) -> bool:
 
     註: 此函式會檢查number是否為正整數，若不是則會拋出TypeError例外。
     例外訊息為「商品數量必須為正整數」。
-    """  
     try:
-        if(not isinstance(number, int)) | (number <= 0):
-            raise TypeError("商品數量必須為正整數")
-        
-        for i in range(len(product_list)):
-            if(product_list[i]["name"] == item):
-                if(number <= product_list[i]["stock"]):
-                    return True
-                else:
-                    return False
-    
-    except TypeError as e:
-        print(e)
-        
-
+        if number <= 0:
+            raise ValueError('商品數量需大於0')
+        if type(number) != int:
+            raise TypeError
+        for product in product_list:
+            if item ==  product['name'] :
+                if number <= product['stock']:
+                    return True     
+        return False
+    except TypeError:
+        print("商品數量必須為正整數")
+        return False
 # 【功能限制-登入後才能用的項目】
 def check_login(func):
     """
@@ -281,7 +279,6 @@ def main():
 
         elif user_input == "6":
             show_cart()
-            
+
 if __name__ == "__main__":
-    for i in generate_product_info(2):
-        print(i)
+    
