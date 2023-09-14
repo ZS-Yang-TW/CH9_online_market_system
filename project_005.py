@@ -24,15 +24,12 @@ def is_user(username: str):
     """
     根據給予的帳號，逐項檢查是否存在於資料集中。
     """
-
     for user in user_data:
         if user["username"] == username:
             return True
     return False
 
 # 【系統功能-檢查電子郵件】
-
-
 def check_email(email: str):
     """
     根據給予的帳號，逐項檢查是否存在於資料集中。
@@ -43,10 +40,7 @@ def check_email(email: str):
     return False
 
 # 【系統功能-檢查電子郵件格式】
-
-
 def is_valid_email(email: str) -> bool:
-
     if email.count('@') != 1:
         return False
 
@@ -57,13 +51,13 @@ def is_valid_email(email: str) -> bool:
 
     if domain.count('.') < 1:
         return False
-
     return True
+
 # 【系統功能-檢查密碼安全性】
 def is_valid_password(pwd:str) -> bool:
     if len(pwd) <= 8:
         return False    
-    
+
     has_lower = False
     for word in pwd:
         if word.islower():
@@ -88,7 +82,6 @@ def check_password(username:str, pwd:str) -> bool:
             return True
 
 # 【系統功能-檢查商品是否存在】
-
 def is_product(item: str) -> bool:
     """
     根據給予的商品名稱，逐項檢查是否存在於資料集中。
@@ -106,11 +99,7 @@ def is_sufficient(item:str, number:int) -> bool:
 
     註: 此函式會檢查number是否為正整數，若不是則會拋出TypeError例外。
     例外訊息為「商品數量必須為正整數」。
-    """
-    class ProductError(Exception):
-        pass
-    
-    
+    """  
     try:
         if(not isinstance(number, int)) | (number <= 0):
             raise TypeError("商品數量必須為正整數")
@@ -165,7 +154,7 @@ def generate_product_info(page_number: int, page_size=10) -> str:
     endIndex = startIndex + page_size
     
     yield "|    商品名稱    |  售價  |   折扣  |  剩餘庫存  |        備註        |"
-    yield "-"*100
+    yield "-"*71
     for product in product_list[startIndex : endIndex]:
         name = product['name']
         price = f"{product['price']}元"
@@ -180,13 +169,11 @@ def generate_product_info(page_number: int, page_size=10) -> str:
         else:
              discountStr = f"{int(discount * 100)}折"
 
-        yield f"|{name:{chr(12288)}>8}|{price:>7}|{discount:>9}|{stock:>12}|{remark:{chr(12288)}>10}|"   
-    yield "-"*100
+        yield f"|{name:{chr(12288)}>8}|{price:>7}|{discountStr:>8}|{stock:>12}|{remark:{chr(12288)}>10}|"   
+    yield "-"*71
     pass
 
 # 【服務功能[1]-會員註冊】
-
-
 def register():
     """
     1. 設定帳號。如果帳號已存在，則顯示「【此帳號已被註冊!】」。
@@ -201,8 +188,6 @@ def register():
     pass
 
 # 【服務功能[2]-會員登入】
-
-
 def login():
     """
     1. 輸入帳號。如果帳號不存在，則顯示「【查無此帳號，請先註冊再登入】」。
@@ -212,8 +197,6 @@ def login():
     pass
 
 # 【服務功能[3]-會員登出】
-
-
 @check_login
 def logout():
     """
@@ -224,8 +207,6 @@ def logout():
     pass
 
 # 【服務功能[4]-查看商城清單】
-
-
 def show_product_list():
     """
     此函式會呼叫 generate_product_info 產生器，並顯示商品資訊。
@@ -235,8 +216,6 @@ def show_product_list():
     pass
 
 # 【服務功能[5]-開始購物】
-
-
 @check_login
 def shopping():
     """
@@ -251,8 +230,6 @@ def shopping():
     pass
 
 # 【服務功能[6]-查看購物車】
-
-
 @check_login
 def show_cart():
     """
@@ -268,8 +245,6 @@ def show_cart():
     pass
 
 # 【服務功能-主目錄】
-
-
 def main():
     user_menu = """
 歡迎來到「好頂線上生鮮超市」!
@@ -308,4 +283,5 @@ def main():
             show_cart()
             
 if __name__ == "__main__":
-    main()
+    for i in generate_product_info(2):
+        print(i)
