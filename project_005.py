@@ -130,9 +130,9 @@ def check_login(func):
 
     如果有登入，則執行原函式；如果沒有登入，則顯示「【請先登入】」。
     """
-    def wrapper(*args, **kwargs):
+    def wrapper():
         if login_status:
-            func(*args, **kwargs)
+            func()
             return
         print("【請先登入】")
     return wrapper
