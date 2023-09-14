@@ -39,9 +39,8 @@ def check_email(email: str):
     """
     根據給予的帳號，逐項檢查是否存在於資料集中。
     """
-
-    for user_email in user_data:
-        if user_email["email"] == email:
+    for user in user_data:
+        if user["email"] == email:
             return True
     return False
 
@@ -131,8 +130,11 @@ def check_login(func):
 
     如果有登入，則執行原函式；如果沒有登入，則顯示「【請先登入】」。
     """
-    def wrapper():
-        pass
+    def wrapper(*args, **kwargs):
+        if login_status:
+            func(*args, **kwargs)
+            return
+        print("【請先登入】")
     return wrapper
 
 # 【系統功能-加入購物車】
