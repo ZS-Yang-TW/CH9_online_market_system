@@ -100,6 +100,7 @@ def is_sufficient(item:str, number:int) -> bool:
 
     註: 此函式會檢查number是否為正整數，若不是則會拋出TypeError例外。
     例外訊息為「商品數量必須為正整數」。
+    """
     try:
         if number <= 0:
             raise ValueError('商品數量需大於0')
@@ -281,4 +282,4 @@ def main():
             show_cart()
 
 if __name__ == "__main__":
-    
+    main()
