@@ -7,7 +7,7 @@ with open('user_data.json','r') as f:
     
 # 引入商品資料
 global product_list
-with open('user_data.json','r') as f:
+with open('product.json','r',encoding='utf-8') as f:
     product_list = json.load(f)
 
 global login_status
@@ -66,7 +66,17 @@ def is_valid_password(pwd:str) -> bool:
     """
     if len(pwd) < 8 :
         return False
-    
+    p_upper = False
+    p_lower = False
+    p_digit = False 
+    for p in pwd :
+        if p.isupper():
+            p_upper = True
+        if p.islower():
+            p_lower = True
+        if p.isdigit():
+            p_digit = True 
+    return p_upper and p_lower and p_digit
 # 【系統功能-確認密碼】
 def check_password(username:str, pwd:str) -> bool:
     """
