@@ -82,14 +82,21 @@ def check_password(username:str, pwd:str) -> bool:
     """
     根據給予的帳號與密碼，逐項檢查是否與資料集中的帳號與密碼相符。
     """
-    pass
+    for data in user_data : 
+        if username == data['username'] and pwd == data['password']:
+            return True
+    return False
+            
 
 # 【系統功能-檢查商品是否存在】
 def is_product(item:str) -> bool:
     """
     根據給予的商品名稱，逐項檢查是否存在於資料集中。
     """
-    pass
+    for product in product_list:
+        if item ==  product['name']:
+            return True
+    return False
 
 # 【系統功能-檢查商品庫存是否足夠】
 def is_sufficient(item:str, number:int) -> bool:
@@ -99,8 +106,24 @@ def is_sufficient(item:str, number:int) -> bool:
     註: 此函式會檢查number是否為正整數，若不是則會拋出TypeError例外。
     例外訊息為「商品數量必須為正整數」。
     """
-    pass
-
+    class ValueError(Exception):
+        pass
+    try:
+        if number <= 0:
+            raise ValueError('商品數量需大於0')
+        if type(number) != int:
+            raise TypeError
+        for product in product_list:
+            if item ==  product['name'] :
+                if number <= product['stock']:
+                    return True     
+        return False
+    except TypeError:
+        print("商品數量必須為正整數")
+        return False
+    except ValueError as e:
+        print(e)
+        return False
 # 【功能限制-登入後才能用的項目】
 def check_login(func):
     """
@@ -243,12 +266,13 @@ def main():
             
         elif user_input == "6":
             show_cart()
+
 # 測試程式碼
 if __name__ == "__main__":
-    print(is_valid_password("AmyIsVerySmart555"))
-    print(is_valid_password("StevenCheng1222"))
-    print(is_valid_password("#%%##%%%#123"))
-    print(is_valid_password("0123456789"))
-    print(is_valid_password("qwertyasdfgh"))
-    print(is_valid_password("ABab12"))
-    print(is_valid_password(""))
+    print(is_sufficient("鮭魚", 5))
+    print(is_sufficient("牛肉", 10))
+    print(is_sufficient("牛肉", 10000))
+    print(is_sufficient("豆漿", 9999))
+    print(is_sufficient("豆漿", 0.5))
+    print(is_sufficient("鮭魚", '1'))
+    print(is_sufficient("鮭魚", -1))
