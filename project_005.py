@@ -2,7 +2,7 @@ import json
 
 # 引入會員資料
 global user_data
-with open('user_data.json','r') as f:
+with open('user_data.json','r', encoding="utf-8") as f:
     user_data = json.load(f)
     
 # 引入商品資料
@@ -17,7 +17,7 @@ global cart
 cart = []
 #print(user_data)
 # 【系統功能-檢查帳號】
-def is_user(username:str) -> bool:
+def is_user(username: str) -> bool:
     """
     根據給予的帳號，逐項檢查是否存在於資料集中。
     """
@@ -89,7 +89,7 @@ def check_password(username:str, pwd:str) -> bool:
             
 
 # 【系統功能-檢查商品是否存在】
-def is_product(item:str) -> bool:
+def is_product(item: str) -> bool:
     """
     根據給予的商品名稱，逐項檢查是否存在於資料集中。
     """
@@ -100,6 +100,7 @@ def is_product(item:str) -> bool:
 
 # 【系統功能-檢查商品庫存是否足夠】
 def is_sufficient(item:str, number:int) -> bool:
+
     """
     根據給予的商品名稱，逐項檢查是否存在於資料集中。
     
