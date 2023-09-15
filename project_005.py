@@ -11,7 +11,10 @@ with open('product.json','r',encoding='utf-8') as f:
     product_list = json.load(f)
 
 global login_status
-login_status = True
+login_status = False
+
+global login_user
+login_user = {}
 
 global cart
 cart = []
@@ -88,10 +91,11 @@ def is_valid_password(pwd:str) -> bool:
 def check_password(username:str, pwd:str) -> bool:
     """
     根據給予的帳號與密碼，逐項檢查是否與資料集中的帳號與密碼相符。
+    若相同，回傳user資料
     """
     for data in user_data : 
         if username == data['username'] and pwd == data['password']:
-            return True
+            return data
     return False
 
 # 【系統功能-檢查商品是否存在】
@@ -284,7 +288,35 @@ def login():
     2. 輸入密碼。如果密碼錯誤，則顯示「【密碼錯誤，請重新輸入一次(還有{chance}次機會)】」，機會最多三次。
     3. 如果密碼錯誤超過三次，則顯示「【密碼錯誤超過三次，請重新登入】」。
     """
-    pass
+    global login_status
+    global login_user
+
+    if login_status:
+        print("您已登入，請先登入")
+        return
+
+    # step 1 enter username
+    username = input("帳號：")
+    if not is_user(username):
+        print("【查無此帳號，請先註冊再登入】")
+        return
+    
+    # step 2 ender password (3 chances)
+    chance = 2
+    while(chance >= 0):
+        password = input("密碼：")
+        user = check_password(username, password)
+        if user:
+            login_status = True
+            login_user = user
+            print("【登入成功】")
+            return
+        else:
+            print(f"【密碼錯誤，請重新輸入一次(還有{chance}次機會)】")
+            chance -= 1
+            
+    print("【密碼錯誤超過三次，請重新登入】")
+    return
 
 # 【服務功能[3]-會員登出】
 @check_login
