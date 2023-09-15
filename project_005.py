@@ -15,6 +15,14 @@ login_status = True
 
 global cart
 cart = []
+
+global register_data
+register_data = {
+    "username": "",
+    "email": "",
+    "password": "",
+}
+
 #print(user_data)
 # 【系統功能-檢查帳號】
 # 定义一个函数来检查用户名是否存在于用户数据中
@@ -67,7 +75,6 @@ def is_valid_password(pwd:str) -> bool:
     for p in pwd :
         if all([p_upper, p_lower, p_digit]): 
             # 已滿足條件，不用繼續檢查
-            print('已滿足條件，不用繼續檢查')
             break
         if p.isupper():
             p_upper = True
@@ -202,7 +209,73 @@ def register():
 
     備註:1~3的功能，輸入"q"即返為主目錄。
     """
-    pass
+    global register_data
+    username = register_data["username"]
+    email = register_data["email"]
+    password = register_data["password"]
+    # step 1
+    if(username):
+        print(f"設定帳號：{username}")
+    else:
+        username = input("設定帳號：")
+
+    if is_user(username):
+        print("【此帳號已被註冊!】")
+        register_data["username"] = ""
+        register()
+
+    register_data["username"] = username
+    # step 2
+    if(email):
+        print(f"設定電子郵件：{email}")
+    else:
+        email = input("設定電子郵件：")
+    
+    if not is_valid_email(email):
+        print("【電子郵件格式錯誤】")
+        register_data["email"] = ""
+        register()
+    else:
+        if check_email(email):
+            print("【此電子郵件已被使用】")
+            register_data["email"] = ""
+            register()
+            
+    register_data["email"] = email
+    # step 3
+    if(password):
+        print(f"設定密碼：{password}")
+    else:
+        password = input("設定密碼：")
+    
+    if not is_valid_password(password):
+        print("【密碼安全性不足，長度需大於8個字元，且需包含大小寫字母與數字】")
+        register_data["password"] = ""
+        register()
+    else:
+        register_data["password"] = password
+        password_confirm = input("確認密碼：")
+        if password != password_confirm:
+            print("【密碼不一致!請重新設定密碼】")
+            register()
+            
+    # step 4
+    user_data.append(register_data)
+    
+    json_object = json.dumps(user_data, indent=4)
+    with open("user_data.json", "w") as outfile:
+        outfile.write(json_object)
+    
+    if is_user(username):
+        print("【註冊成功】")
+        register_data = {
+            "username": "",
+            "email": "",
+            "password": "",
+        }
+    else:
+        print("註冊發生錯誤，請稍後重試")
+        register()
 
 # 【服務功能[2]-會員登入】
 def login():
