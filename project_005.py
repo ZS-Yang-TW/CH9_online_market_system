@@ -326,7 +326,20 @@ def logout():
     2. 如果輸入y，則清空購物車，並將全域變數 login_status 設為 False，最後顯示「【登出成功】」。
     3. 如果輸入n，則不做任何事情。直接返回主目錄。
     """
-    pass
+    global login_status
+    global login_user
+    global cart
+    user_input = input("【確定要登出嗎? [y/n]】")
+    if user_input.lower() == 'y':
+        login_status = False
+        login_user = {}
+        cart = []
+        print("【登出成功】")
+    elif user_input.lower() == 'n':
+        return
+    else:
+        print("請輸入有效指令")
+        logout()
 
 # 【服務功能[4]-查看商城清單】
 def show_product_list():
