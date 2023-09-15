@@ -65,6 +65,10 @@ def is_valid_password(pwd:str) -> bool:
     p_lower = False
     p_digit = False 
     for p in pwd :
+        if all([p_upper, p_lower, p_digit]): 
+            # 已滿足條件，不用繼續檢查
+            print('已滿足條件，不用繼續檢查')
+            break
         if p.isupper():
             p_upper = True
         if p.islower():
@@ -84,13 +88,14 @@ def check_password(username:str, pwd:str) -> bool:
     return False
 
 # 【系統功能-檢查商品是否存在】
-def is_product(item: str) -> bool:
+def is_product(item: str) -> bool or dict:
     """
     根據給予的商品名稱，逐項檢查是否存在於資料集中。
+    若有值，回傳product資料
     """
     for product in product_list:
         if item ==  product['name']:
-            return True
+            return product
     return False
 
 # 【系統功能-檢查商品庫存是否足夠】
@@ -107,13 +112,13 @@ def is_sufficient(item:str, number:int) -> bool:
         if type(number) != int:
             raise TypeError
         for product in product_list:
-            if item ==  product['name'] :
-                if number <= product['stock']:
-                    return True     
+            if item ==  product['name'] and number <= product['stock']:
+                return True     
         return False
     except TypeError:
         print("商品數量必須為正整數")
-        return False
+    except ValueError as err:
+        print(err)
 # 【功能限制-登入後才能用的項目】
 def check_login(func):
     """
@@ -137,7 +142,20 @@ def add_to_cart(item: str, number: int):
     2. 檢查商品庫存是否足夠。如果不足，則顯示「【很抱歉，我們的庫存不足{number}份!> <】」。
     3. 如果檢查都通過，則以tuple的方式將商品及數量加入購物車串列，並顯示「【{item}*{number} 已加入購物車!】」。
     """
-    pass
+    product = is_product(item)
+    if(not product):
+        print('【我們沒有這個商品喔!】')
+        return
+    
+    haveStock = is_sufficient(item, number)
+    if(haveStock is None):
+        return
+    if(not haveStock):
+        print('很抱歉，我們的庫存不足{number}份!> <】')
+        return
+    else:
+        cart.append((product, number))
+        print(f"【{item}*{number} 已加入購物車!】")
 
 # 【系統功能-產生商品資訊】
 def generate_product_info(page_number: int, page_size=10) -> str:
