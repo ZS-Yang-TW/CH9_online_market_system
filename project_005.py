@@ -73,20 +73,20 @@ def is_valid_password(pwd:str) -> bool:
     """
     if len(pwd) < 8 :
         return False
-    p_upper = False
-    p_lower = False
-    p_digit = False 
+    hasUpper = False
+    hasLower = False
+    hasDigit = False 
     for p in pwd :
-        if all([p_upper, p_lower, p_digit]): 
+        if all([hasUpper, hasLower, hasDigit]): 
             # 已滿足條件，不用繼續檢查
             break
         if p.isupper():
-            p_upper = True
+            hasUpper = True
         if p.islower():
-            p_lower = True
+            hasLower = True
         if p.isdigit():
-            p_digit = True 
-    return p_upper and p_lower and p_digit
+            hasDigit = True 
+    return hasUpper and hasLower and hasDigit
 
 # 【系統功能-確認密碼】
 def check_password(username:str, pwd:str) -> bool:
