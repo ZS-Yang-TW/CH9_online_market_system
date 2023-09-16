@@ -1,4 +1,5 @@
 import json
+import math
 
 # 引入會員資料
 global user_data
@@ -11,11 +12,23 @@ with open('product.json','r',encoding='utf-8') as f:
     product_list = json.load(f)
 
 global login_status
-login_status = True
+login_status = False
+
+global login_user
+login_user = {}
 
 global cart
 cart = []
-# print(user_data)
+
+global register_data
+register_data = {
+    "username": "",
+    "email": "",
+    "password": "",
+}
+
+#print(user_data)
+
 # 【系統功能-檢查帳號】
 # 定义一个函数来检查用户名是否存在于用户数据中
 
@@ -65,22 +78,47 @@ def is_valid_password(pwd:str) -> bool:
     1. 密碼長度需大於8個字元。
     2. 密碼需包含大小寫字母與數字。
     """
-    pass
+    if len(pwd) < 8 :
+        return False
+    hasUpper = False
+    hasLower = False
+    hasDigit = False 
+    for p in pwd :
+        if all([hasUpper, hasLower, hasDigit]): 
+            # 已滿足條件，不用繼續檢查
+            break
+        if p.isupper():
+            hasUpper = True
+        if p.islower():
+            hasLower = True
+        if p.isdigit():
+            hasDigit = True 
+    return hasUpper and hasLower and hasDigit
 
 
 # 【系統功能-確認密碼】
 def check_password(username:str, pwd:str) -> bool:
     """
     根據給予的帳號與密碼，逐項檢查是否與資料集中的帳號與密碼相符。
+    若相同，回傳user資料
     """
-    pass
+    for data in user_data : 
+        if username == data['username'] and pwd == data['password']:
+            return data
+    return False
+
 
 # 【系統功能-檢查商品是否存在】
-def is_product(item: str) -> bool:
+def is_product(item: str) -> bool or dict:
     """
     根據給予的商品名稱，逐項檢查是否存在於資料集中。
+    若有值，回傳product資料
     """
-    pass
+    for product in product_list:
+        if item ==  product['name']:
+            return product
+    return False
+
 
 # 【系統功能-檢查商品庫存是否足夠】
 def is_sufficient(item:str, number:int) -> bool:
@@ -90,7 +128,19 @@ def is_sufficient(item:str, number:int) -> bool:
     註: 此函式會檢查number是否為正整數，若不是則會拋出TypeError例外。
     例外訊息為「商品數量必須為正整數」。
     """
-    pass
+    try:
+        if number <= 0:
+            raise ValueError('商品數量需大於0')
+        if type(number) != int:
+            raise TypeError
+        for product in product_list:
+            if item ==  product['name'] and number <= product['stock']:
+                return True     
+        return False
+    except TypeError:
+        print("商品數量必須為正整數")
+    except ValueError as err:
+        print(err)
 
 # 【功能限制-登入後才能用的項目】
 def check_login(func):
@@ -153,7 +203,73 @@ def register():
 
     備註:1~3的功能，輸入"q"即返為主目錄。
     """
-    pass
+    global register_data
+    username = register_data["username"]
+    email = register_data["email"]
+    password = register_data["password"]
+    # step 1
+    if(username):
+        print(f"設定帳號：{username}")
+    else:
+        username = input("設定帳號：")
+
+    if is_user(username):
+        print("【此帳號已被註冊!】")
+        register_data["username"] = ""
+        register()
+
+    register_data["username"] = username
+    # step 2
+    if(email):
+        print(f"設定電子郵件：{email}")
+    else:
+        email = input("設定電子郵件：")
+    
+    if not is_valid_email(email):
+        print("【電子郵件格式錯誤】")
+        register_data["email"] = ""
+        register()
+    else:
+        if check_email(email):
+            print("【此電子郵件已被使用】")
+            register_data["email"] = ""
+            register()
+            
+    register_data["email"] = email
+    # step 3
+    if(password):
+        print(f"設定密碼：{password}")
+    else:
+        password = input("設定密碼：")
+    
+    if not is_valid_password(password):
+        print("【密碼安全性不足，長度需大於8個字元，且需包含大小寫字母與數字】")
+        register_data["password"] = ""
+        register()
+    else:
+        register_data["password"] = password
+        password_confirm = input("確認密碼：")
+        if password != password_confirm:
+            print("【密碼不一致!請重新設定密碼】")
+            register()
+            
+    # step 4
+    user_data.append(register_data)
+    
+    json_object = json.dumps(user_data, indent=4)
+    with open("user_data.json", "w") as outfile:
+        outfile.write(json_object)
+    
+    if is_user(username):
+        print("【註冊成功】")
+        register_data = {
+            "username": "",
+            "email": "",
+            "password": "",
+        }
+    else:
+        print("註冊發生錯誤，請稍後重試")
+        register()
 
 # 【服務功能[2]-會員登入】
 def login():
@@ -162,7 +278,35 @@ def login():
     2. 輸入密碼。如果密碼錯誤，則顯示「【密碼錯誤，請重新輸入一次(還有{chance}次機會)】」，機會最多三次。
     3. 如果密碼錯誤超過三次，則顯示「【密碼錯誤超過三次，請重新登入】」。
     """
-    pass
+    global login_status
+    global login_user
+
+    if login_status:
+        print("您已登入，請先登入")
+        return
+
+    # step 1 enter username
+    username = input("帳號：")
+    if not is_user(username):
+        print("【查無此帳號，請先註冊再登入】")
+        return
+    
+    # step 2 ender password (3 chances)
+    chance = 2
+    while(chance >= 0):
+        password = input("密碼：")
+        user = check_password(username, password)
+        if user:
+            login_status = True
+            login_user = user
+            print("【登入成功】")
+            return
+        else:
+            print(f"【密碼錯誤，請重新輸入一次(還有{chance}次機會)】")
+            chance -= 1
+            
+    print("【密碼錯誤超過三次，請重新登入】")
+    return
 
 # 【服務功能[3]-會員登出】
 @check_login
@@ -172,18 +316,69 @@ def logout():
     2. 如果輸入y，則清空購物車，並將全域變數 login_status 設為 False，最後顯示「【登出成功】」。
     3. 如果輸入n，則不做任何事情。直接返回主目錄。
     """
-    pass
+    global login_status
+    global login_user
+    global cart
+    user_input = input("【確定要登出嗎? [y/n]】")
+    if user_input.lower() == 'y':
+        login_status = False
+        login_user = {}
+        cart = []
+        print("【登出成功】")
+    elif user_input.lower() == 'n':
+        return
+    else:
+        print("請輸入有效指令")
+        logout()
 
 # 【服務功能[4]-查看商城清單】
-def show_product_list():
+def show_product_list(page_number = 1):
     """
     此函式會呼叫 generate_product_info 產生器，並顯示商品資訊。
     1. 請先設定頁數為1。
     2. 系統訊息為:「第 {page_number} 頁，輸入 [p] 查看上一頁，輸入 [n] 查看下一頁，輸入 [q] 返回主目錄」"
     """
-    pass
-
+    page_size = 10
+    total_page = math.ceil(len(product_list) / 10)
+    product_menu = generate_product_info(page_number, page_size)
+    for i in product_menu:
+        print(i)
+            
+    userInput = input(f"「第 {page_number} 頁，輸入 [p] 查看上一頁，輸入 [n] 查看下一頁，輸入 [q] 返回主目錄」").lower()
+    
+    if userInput == 'q':
+        return
+    elif userInput == 'p':
+        if page_number == 1:
+            print("這是第一頁了！")
+        else:
+            page_number -= 1
+        show_product_list(page_number)
+    elif userInput == 'n':
+        if page_number == total_page:
+            print("這是最後一頁了！")
+        else:
+            page_number += 1
+        show_product_list(page_number)
+    else:
+        print()
+        
 # 【服務功能[5]-開始購物】
+def cart_request():
+    userInput = input("🛒 加入購物車，請輸入商品名稱與數量，格式為「商品名稱 數量」，例如: 蘋果 3：")
+    try:
+        user_request = userInput.split(" ")
+        if not user_request or len(user_request) != 2:
+            raise ValueError("【輸入格式似乎有問題喔~ 請重新輸入一次】")
+        elif not is_product(user_request[0]):
+            raise ValueError("【查無此商品~ 請重新輸入一次】")
+        elif not is_sufficient(user_request[0], int(user_request[1])):
+            raise ValueError("【商品庫存不足~ 請重新輸入一次】")
+        else:
+            return [user_request[0], user_request[1]]
+    except ValueError as err:
+        print(err)
+        cart_request()
 @check_login
 def shopping():
     """
@@ -195,7 +390,11 @@ def shopping():
     5. 使用者輸入時，如果有輸入格式錯誤，則顯示「【輸入格式似乎有問題喔~ 請重新輸入一次】」。(請使用try except)
     6. 如果格式正確，則呼叫 add_to_cart 函式，將商品加入購物車。
     """
-    pass
+    print("【開始買東西!】")
+    show_product_list(1)
+    item, amount = cart_request()
+    print(item, amount)
+    add_to_cart(item, int(amount))
 
 # 【服務功能[6]-查看購物車】
 @check_login
@@ -224,7 +423,31 @@ def main():
     [5] 開始買東西!
     [6] 查看購物車
 """
-    pass
+    while True:
+        print(user_menu)
+
+        user_input = input("請輸入指令: ")
+        if user_input == "q":
+            break
+
+        if user_input == "1":
+            register()
+
+        elif user_input == "2":
+            login()
+
+        elif user_input == "3":
+            logout()
+
+        elif user_input == "4":
+            show_product_list(1)
+
+        elif user_input == "5":
+            shopping()
+
+        elif user_input == "6":
+            show_cart()
+
 
 if __name__ == "__main__":
     main()
