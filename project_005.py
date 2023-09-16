@@ -24,34 +24,18 @@ def is_user(username: str):
     """
     根據給予的帳號，逐項檢查是否存在於資料集中。
     """
-    for user in user_data:
-        if user["username"] == username:
-            return True
-    return False
+    
 
 # 【系統功能-檢查電子郵件】
 def check_email(email: str):
     """
     根據給予的帳號，逐項檢查是否存在於資料集中。
     """
-    for user in user_data:
-        if user["email"] == email:
-            return True
-    return False
+    
 
 # 【系統功能-檢查電子郵件格式】
 def is_valid_email(email: str) -> bool:
-    if email.count('@') != 1:
-        return False
-
-    name, domain = email.split('@')
-
-    if not name and not domain:
-        return False
-
-    if domain.count('.') < 1:
-        return False
-    return True
+    
 
 # 【系統功能-檢查密碼安全性】
 def is_valid_password(pwd:str) -> bool:
@@ -59,39 +43,21 @@ def is_valid_password(pwd:str) -> bool:
     1. 密碼長度需大於8個字元。
     2. 密碼需包含大小寫字母與數字。
     """
-    if len(pwd) < 8 :
-        return False
-    p_upper = False
-    p_lower = False
-    p_digit = False 
-    for p in pwd :
-        if p.isupper():
-            p_upper = True
-        if p.islower():
-            p_lower = True
-        if p.isdigit():
-            p_digit = True 
-    return p_upper and p_lower and p_digit
+    pass
 
 # 【系統功能-確認密碼】
 def check_password(username:str, pwd:str) -> bool:
     """
     根據給予的帳號與密碼，逐項檢查是否與資料集中的帳號與密碼相符。
     """
-    for data in user_data : 
-        if username == data['username'] and pwd == data['password']:
-            return True
-    return False
+    pass
 
 # 【系統功能-檢查商品是否存在】
 def is_product(item: str) -> bool:
     """
     根據給予的商品名稱，逐項檢查是否存在於資料集中。
     """
-    for product in product_list:
-        if item ==  product['name']:
-            return True
-    return False
+    
 
 # 【系統功能-檢查商品庫存是否足夠】
 def is_sufficient(item:str, number:int) -> bool:
@@ -101,19 +67,7 @@ def is_sufficient(item:str, number:int) -> bool:
     註: 此函式會檢查number是否為正整數，若不是則會拋出TypeError例外。
     例外訊息為「商品數量必須為正整數」。
     """
-    try:
-        if number <= 0:
-            raise ValueError('商品數量需大於0')
-        if type(number) != int:
-            raise TypeError
-        for product in product_list:
-            if item ==  product['name'] :
-                if number <= product['stock']:
-                    return True     
-        return False
-    except TypeError:
-        print("商品數量必須為正整數")
-        return False
+    
 # 【功能限制-登入後才能用的項目】
 def check_login(func):
     """
@@ -123,12 +77,7 @@ def check_login(func):
 
     如果有登入，則執行原函式；如果沒有登入，則顯示「【請先登入】」。
     """
-    def wrapper():
-        if login_status:
-            func()
-            return
-        print("【請先登入】")
-    return wrapper
+   
 
 # 【系統功能-加入購物車】
 def add_to_cart(item: str, number: int):
@@ -149,27 +98,7 @@ def generate_product_info(page_number: int, page_size=10) -> str:
     4. 商品資訊的格式如下：
     |    商品名稱    |  售價  |   折扣  |  剩餘庫存  |        備註        |
     """
-    startIndex = (page_number - 1) * page_size
-    endIndex = startIndex + page_size
     
-    yield "|    商品名稱    |  售價  |   折扣  |  剩餘庫存  |        備註        |"
-    yield "-"*71
-    for product in product_list[startIndex : endIndex]:
-        name = product['name']
-        price = f"{product['price']}元"
-        discount = product['discount']
-        stock = product['stock']
-        remark = product['remark']
-
-        if discount == 1:
-            discountStr = "　-"
-        elif discount * 100 % 10 == 0:
-            discountStr = f"{int(discount * 10)}折"
-        else:
-             discountStr = f"{int(discount * 100)}折"
-
-        yield f"|{name:{chr(12288)}>8}|{price:>7}|{discountStr:>8}|{stock:>12}|{remark:{chr(12288)}>10}|"   
-    yield "-"*71
     pass
 
 # 【服務功能[1]-會員註冊】
