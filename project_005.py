@@ -24,26 +24,51 @@ def is_user(username: str):
     """
     根據給予的帳號，逐項檢查是否存在於資料集中。
     """
-    
+    pass
 
 # 【系統功能-檢查電子郵件】
 def check_email(email: str):
     """
     根據給予的帳號，逐項檢查是否存在於資料集中。
     """
+    pass
+    
     
 
 # 【系統功能-檢查電子郵件格式】
 def is_valid_email(email: str) -> bool:
+    if email.count("@") != 1:
+        return False
+    if email.startswith("@"):
+        return False
+    if email.endswith("@"):
+        return False   
+    username, domain = email.split("@")
+    if not username or not domain:
+        return False
+    if domain.count(".") != 1:
+        return False        
+    else:
+        return True
+
     
 
+ 
 # 【系統功能-檢查密碼安全性】
 def is_valid_password(pwd:str) -> bool:
     """
     1. 密碼長度需大於8個字元。
     2. 密碼需包含大小寫字母與數字。
     """
-    pass
+    if len(pwd) <= 8:
+        return True
+    if pwd.isnumeric
+    
+
+
+
+
+
 
 # 【系統功能-確認密碼】
 def check_password(username:str, pwd:str) -> bool:
@@ -185,30 +210,30 @@ def main():
     [6] 查看購物車
 """
 
-    while True:
-        print(user_menu)
+#     while True:
+#         print(user_menu)
 
-        user_input = input("請輸入指令: ")
-        if user_input == "q":
-            break
+#         user_input = input("請輸入指令: ")
+#         if user_input == "q":
+#             break
 
-        if user_input == "1":
-            register()
+#         if user_input == "1":
+#             register()
 
-        elif user_input == "2":
-            login()
+#         elif user_input == "2":
+#             login()
 
-        elif user_input == "3":
-            logout()
+#         elif user_input == "3":
+#             logout()
 
-        elif user_input == "4":
-            show_product_list()
+#         elif user_input == "4":
+#             show_product_list()
 
-        elif user_input == "5":
-            shopping()
+#         elif user_input == "5":
+#             shopping()
 
-        elif user_input == "6":
-            show_cart()
+#         elif user_input == "6":
+#             show_cart()
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
