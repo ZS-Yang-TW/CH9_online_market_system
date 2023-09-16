@@ -15,7 +15,7 @@ login_status = True
 
 global cart
 cart = []
-#print(user_data)
+# print(user_data)
 # 【系統功能-檢查帳號】
 # 定义一个函数来检查用户名是否存在于用户数据中
 
@@ -24,16 +24,19 @@ def is_user(username: str):
     """
     根據給予的帳號，逐項檢查是否存在於資料集中。
     """
-    pass
-
+    global user_data
+    for user in user_data:
+        if username == user["username"]: 
+            return True
+    
+    return False
+    
 # 【系統功能-檢查電子郵件】
 def check_email(email: str):
     """
     根據給予的帳號，逐項檢查是否存在於資料集中。
     """
     pass
-    
-    
 
 # 【系統功能-檢查電子郵件格式】
 def is_valid_email(email: str) -> bool:
@@ -51,7 +54,9 @@ def is_valid_email(email: str) -> bool:
     else:
         return True
 
-    
+# 【系統功能-檢查電子郵件格式】
+def is_valid_email(email: str) -> bool:
+   pass
 
  
 # 【系統功能-檢查密碼安全性】
@@ -60,14 +65,7 @@ def is_valid_password(pwd:str) -> bool:
     1. 密碼長度需大於8個字元。
     2. 密碼需包含大小寫字母與數字。
     """
-    if len(pwd) <= 8:
-        return True
-    if pwd.isnumeric
-    
-
-
-
-
+    pass
 
 
 # 【系統功能-確認密碼】
@@ -82,7 +80,7 @@ def is_product(item: str) -> bool:
     """
     根據給予的商品名稱，逐項檢查是否存在於資料集中。
     """
-    
+    pass
 
 # 【系統功能-檢查商品庫存是否足夠】
 def is_sufficient(item:str, number:int) -> bool:
@@ -92,7 +90,8 @@ def is_sufficient(item:str, number:int) -> bool:
     註: 此函式會檢查number是否為正整數，若不是則會拋出TypeError例外。
     例外訊息為「商品數量必須為正整數」。
     """
-    
+    pass
+
 # 【功能限制-登入後才能用的項目】
 def check_login(func):
     """
@@ -102,7 +101,7 @@ def check_login(func):
 
     如果有登入，則執行原函式；如果沒有登入，則顯示「【請先登入】」。
     """
-   
+    pass
 
 # 【系統功能-加入購物車】
 def add_to_cart(item: str, number: int):
@@ -111,8 +110,25 @@ def add_to_cart(item: str, number: int):
     2. 檢查商品庫存是否足夠。如果不足，則顯示「【很抱歉，我們的庫存不足{number}份!> <】」。
     3. 如果檢查都通過，則以tuple的方式將商品及數量加入購物車串列，並顯示「【{item}*{number} 已加入購物車!】」。
     """
-    pass
 
+    if type(item)!= str:
+        print(f"{item}不是字串！")
+        return
+    if type(number) != int:
+        print(f"{number} 不是數值！")
+        return
+    if is_product(item):
+        print(f"該商品不存在")
+        return
+    
+    if is_sufficient(item , number) == False:
+        print(f"「【很抱歉，我們的庫存不足{number}份!> <】」")
+        
+        return
+    cart.append((item, number))
+    print(f"【{item}*{number} 已加入購物車!】」")
+    
+ 
 # 【系統功能-產生商品資訊】
 def generate_product_info(page_number: int, page_size=10) -> str:
     """
@@ -123,7 +139,6 @@ def generate_product_info(page_number: int, page_size=10) -> str:
     4. 商品資訊的格式如下：
     |    商品名稱    |  售價  |   折扣  |  剩餘庫存  |        備註        |
     """
-    
     pass
 
 # 【服務功能[1]-會員註冊】
@@ -209,31 +224,7 @@ def main():
     [5] 開始買東西!
     [6] 查看購物車
 """
+    pass
 
-#     while True:
-#         print(user_menu)
-
-#         user_input = input("請輸入指令: ")
-#         if user_input == "q":
-#             break
-
-#         if user_input == "1":
-#             register()
-
-#         elif user_input == "2":
-#             login()
-
-#         elif user_input == "3":
-#             logout()
-
-#         elif user_input == "4":
-#             show_product_list()
-
-#         elif user_input == "5":
-#             shopping()
-
-#         elif user_input == "6":
-#             show_cart()
-
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
