@@ -36,21 +36,34 @@ def is_user(username: str):
     """
     根據給予的帳號，逐項檢查是否存在於資料集中。
     """
-    pass
+    for user in user_data:
+        if user["username"] == username:
+            return True
+    return False
 
 # 【系統功能-檢查電子郵件】
 def check_email(email: str):
     """
     根據給予的帳號，逐項檢查是否存在於資料集中。
     """
-    pass
+    for user in user_data:
+        if user["email"] == email:
+            return True
+    return False
 
 # 【系統功能-檢查電子郵件格式】
 def is_valid_email(email: str) -> bool:
-    """
-    根據給予的電子郵件，檢查是否已存在於與資料集中的電子郵件。
-    """
-    pass
+    if email.count('@') != 1:
+        return False
+
+    name, domain = email.split('@')
+
+    if not name and not domain:
+        return False
+
+    if domain.count('.') < 1:
+        return False
+    return True
 
 # 【系統功能-檢查密碼安全性】
 def is_valid_password(pwd:str) -> bool:
@@ -127,7 +140,12 @@ def check_login(func):
 
     如果有登入，則執行原函式；如果沒有登入，則顯示「【請先登入】」。
     """
-    pass
+    def wrapper():
+        if login_status:
+            func()
+            return
+        print("【請先登入】")
+    return wrapper
 
 # 【系統功能-加入購物車】
 def add_to_cart(item: str, number: int):
@@ -161,6 +179,27 @@ def generate_product_info(page_number: int, page_size=10) -> str:
     4. 商品資訊的格式如下：
     |    商品名稱    |  售價  |   折扣  |  剩餘庫存  |        備註        |
     """
+    startIndex = (page_number - 1) * page_size
+    endIndex = startIndex + page_size
+    
+    yield "|    商品名稱    |  售價  |   折扣  |  剩餘庫存  |        備註        |"
+    yield "-"*71
+    for product in product_list[startIndex : endIndex]:
+        name = product['name']
+        price = f"{product['price']}元"
+        discount = product['discount']
+        stock = product['stock']
+        remark = product['remark']
+
+        if discount == 1:
+            discountStr = "　-"
+        elif discount * 100 % 10 == 0:
+            discountStr = f"{int(discount * 10)}折"
+        else:
+             discountStr = f"{int(discount * 100)}折"
+
+        yield f"|{name:{chr(12288)}>8}|{price:>7}|{discountStr:>8}|{stock:>12}|{remark:{chr(12288)}>10}|"   
+    yield "-"*71
     pass
 
 # 【服務功能[1]-會員註冊】
