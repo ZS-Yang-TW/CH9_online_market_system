@@ -1,4 +1,5 @@
 import json
+import math
 
 # 引入會員資料
 global user_data
@@ -342,14 +343,37 @@ def logout():
         logout()
 
 # 【服務功能[4]-查看商城清單】
-def show_product_list():
+def show_product_list(page_number = 1):
     """
     此函式會呼叫 generate_product_info 產生器，並顯示商品資訊。
     1. 請先設定頁數為1。
     2. 系統訊息為:「第 {page_number} 頁，輸入 [p] 查看上一頁，輸入 [n] 查看下一頁，輸入 [q] 返回主目錄」"
     """
-    pass
-
+    page_size = 10
+    total_page = math.ceil(len(product_list) / 10)
+    product_menu = generate_product_info(page_number, page_size)
+    for i in product_menu:
+        print(i)
+            
+    userInput = input(f"「第 {page_number} 頁，輸入 [p] 查看上一頁，輸入 [n] 查看下一頁，輸入 [q] 返回主目錄」").lower()
+    
+    if userInput == 'q':
+        return
+    elif userInput == 'p':
+        if page_number == 1:
+            print("這是第一頁了！")
+        else:
+            page_number -= 1
+        show_product_list(page_number)
+    elif userInput == 'n':
+        if page_number == total_page:
+            print("這是最後一頁了！")
+        else:
+            page_number += 1
+        show_product_list(page_number)
+    else:
+        print()
+        
 # 【服務功能[5]-開始購物】
 @check_login
 def shopping():
@@ -409,7 +433,7 @@ def main():
             logout()
 
         elif user_input == "4":
-            show_product_list()
+            show_product_list(1)
 
         elif user_input == "5":
             shopping()
