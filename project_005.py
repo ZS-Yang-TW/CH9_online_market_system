@@ -24,8 +24,13 @@ def is_user(username: str):
     """
     根據給予的帳號，逐項檢查是否存在於資料集中。
     """
-    pass
-
+    global user_data
+    for user in user_data:
+        if username == user["username"]: 
+            return True
+    
+    return False
+    
 # 【系統功能-檢查電子郵件】
 def check_email(email: str):
     """
@@ -183,4 +188,13 @@ def main():
     [6] 查看購物車
 """
     pass
+
+if __name__ == "__main__":
+    login_status = False
+    @check_login
+    def test():
+        print("test() has been called.")
+        pass
+    
+    test()
     
