@@ -1,4 +1,5 @@
 import json
+from sys import argv
 
 # 引入會員資料
 global user_data
@@ -15,7 +16,7 @@ login_status = True
 
 global cart
 cart = []
-#print(user_data)
+# print(user_data)
 # 【系統功能-檢查帳號】
 # 定义一个函数来检查用户名是否存在于用户数据中
 
@@ -62,7 +63,12 @@ def is_product(item: str) -> bool:
     """
     根據給予的商品名稱，逐項檢查是否存在於資料集中。
     """
-    pass
+
+    return False
+    for product in product_list:
+        if item ==  product['name']:
+            return True
+    return False
 
 # 【系統功能-檢查商品庫存是否足夠】
 def is_sufficient(item:str, number:int) -> bool:
@@ -73,6 +79,7 @@ def is_sufficient(item:str, number:int) -> bool:
     例外訊息為「商品數量必須為正整數」。
     """
     pass
+
 # 【功能限制-登入後才能用的項目】
 def check_login(func):
     """
@@ -90,8 +97,25 @@ def add_to_cart(item: str, number: int):
     2. 檢查商品庫存是否足夠。如果不足，則顯示「【很抱歉，我們的庫存不足{number}份!> <】」。
     3. 如果檢查都通過，則以tuple的方式將商品及數量加入購物車串列，並顯示「【{item}*{number} 已加入購物車!】」。
     """
-    pass
 
+    if type(item)!= str:
+        print(f"{item}不是字串！")
+        return
+    if type(number) != int:
+        print(f"{number} 不是數值！")
+        return
+    if is_product(item):
+        print(f"該商品不存在")
+        return
+    
+    if is_sufficient(item , number) == False:
+        print(f"「【很抱歉，我們的庫存不足{number}份!> <】」")
+        
+        return
+    cart.append((item, number))
+    print(f"【{item}*{number} 已加入購物車!】」")
+    
+ 
 # 【系統功能-產生商品資訊】
 def generate_product_info(page_number: int, page_size=10) -> str:
     """
@@ -101,6 +125,8 @@ def generate_product_info(page_number: int, page_size=10) -> str:
     3. 商品名稱與備註的欄位，使用全形空白填滿。
     4. 商品資訊的格式如下：
     |    商品名稱    |  售價  |   折扣  |  剩餘庫存  |        備註        |
+    
+    chec
     """
     pass
 
@@ -190,11 +216,4 @@ def main():
     pass
 
 if __name__ == "__main__":
-    login_status = False
-    @check_login
-    def test():
-        print("test() has been called.")
-        pass
-    
-    test()
-    
+    main()
