@@ -375,6 +375,21 @@ def show_product_list(page_number = 1):
         print()
         
 # 【服務功能[5]-開始購物】
+def cart_request():
+    userInput = input("🛒 加入購物車，請輸入商品名稱與數量，格式為「商品名稱 數量」，例如: 蘋果 3：")
+    try:
+        user_request = userInput.split(" ")
+        if not user_request or len(user_request) != 2:
+            raise ValueError("【輸入格式似乎有問題喔~ 請重新輸入一次】")
+        elif not is_product(user_request[0]):
+            raise ValueError("【查無此商品~ 請重新輸入一次】")
+        elif not is_sufficient(user_request[0], int(user_request[1])):
+            raise ValueError("【商品庫存不足~ 請重新輸入一次】")
+        else:
+            return [user_request[0], user_request[1]]
+    except ValueError as err:
+        print(err)
+        cart_request()
 @check_login
 def shopping():
     """
@@ -386,7 +401,11 @@ def shopping():
     5. 使用者輸入時，如果有輸入格式錯誤，則顯示「【輸入格式似乎有問題喔~ 請重新輸入一次】」。(請使用try except)
     6. 如果格式正確，則呼叫 add_to_cart 函式，將商品加入購物車。
     """
-    pass
+    print("【開始買東西!】")
+    show_product_list(1)
+    item, amount = cart_request()
+    print(item, amount)
+    add_to_cart(item, int(amount))
 
 # 【服務功能[6]-查看購物車】
 @check_login
