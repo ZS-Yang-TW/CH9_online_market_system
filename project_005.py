@@ -28,6 +28,7 @@ register_data = {
 }
 
 #print(user_data)
+
 # 【系統功能-檢查帳號】
 # 定义一个函数来检查用户名是否存在于用户数据中
 
@@ -36,35 +37,41 @@ def is_user(username: str):
     """
     根據給予的帳號，逐項檢查是否存在於資料集中。
     """
+    global user_data
     for user in user_data:
-        if user["username"] == username:
+        if username == user["username"]: 
             return True
+    
     return False
-
+    
 # 【系統功能-檢查電子郵件】
 def check_email(email: str):
     """
     根據給予的帳號，逐項檢查是否存在於資料集中。
     """
-    for user in user_data:
-        if user["email"] == email:
-            return True
-    return False
+    pass
 
 # 【系統功能-檢查電子郵件格式】
 def is_valid_email(email: str) -> bool:
-    if email.count('@') != 1:
+    if email.count("@") != 1:
         return False
-
-    name, domain = email.split('@')
-
-    if not name and not domain:
+    if email.startswith("@"):
         return False
-
-    if domain.count('.') < 1:
+    if email.endswith("@"):
+        return False   
+    username, domain = email.split("@")
+    if not username or not domain:
         return False
-    return True
+    if domain.count(".") != 1:
+        return False        
+    else:
+        return True
 
+# 【系統功能-檢查電子郵件格式】
+def is_valid_email(email: str) -> bool:
+   pass
+
+ 
 # 【系統功能-檢查密碼安全性】
 def is_valid_password(pwd:str) -> bool:
     """
@@ -88,6 +95,7 @@ def is_valid_password(pwd:str) -> bool:
             hasDigit = True 
     return hasUpper and hasLower and hasDigit
 
+
 # 【系統功能-確認密碼】
 def check_password(username:str, pwd:str) -> bool:
     """
@@ -99,6 +107,7 @@ def check_password(username:str, pwd:str) -> bool:
             return data
     return False
 
+
 # 【系統功能-檢查商品是否存在】
 def is_product(item: str) -> bool or dict:
     """
@@ -109,6 +118,7 @@ def is_product(item: str) -> bool or dict:
         if item ==  product['name']:
             return product
     return False
+
 
 # 【系統功能-檢查商品庫存是否足夠】
 def is_sufficient(item:str, number:int) -> bool:
@@ -131,6 +141,7 @@ def is_sufficient(item:str, number:int) -> bool:
         print("商品數量必須為正整數")
     except ValueError as err:
         print(err)
+
 # 【功能限制-登入後才能用的項目】
 def check_login(func):
     """
@@ -140,12 +151,7 @@ def check_login(func):
 
     如果有登入，則執行原函式；如果沒有登入，則顯示「【請先登入】」。
     """
-    def wrapper():
-        if login_status:
-            func()
-            return
-        print("【請先登入】")
-    return wrapper
+    pass
 
 # 【系統功能-加入購物車】
 def add_to_cart(item: str, number: int):
@@ -154,21 +160,25 @@ def add_to_cart(item: str, number: int):
     2. 檢查商品庫存是否足夠。如果不足，則顯示「【很抱歉，我們的庫存不足{number}份!> <】」。
     3. 如果檢查都通過，則以tuple的方式將商品及數量加入購物車串列，並顯示「【{item}*{number} 已加入購物車!】」。
     """
-    product = is_product(item)
-    if(not product):
-        print('【我們沒有這個商品喔!】')
+
+    if type(item)!= str:
+        print(f"{item}不是字串！")
+        return
+    if type(number) != int:
+        print(f"{number} 不是數值！")
+        return
+    if is_product(item):
+        print(f"該商品不存在")
         return
     
-    haveStock = is_sufficient(item, number)
-    if(haveStock is None):
+    if is_sufficient(item , number) == False:
+        print(f"「【很抱歉，我們的庫存不足{number}份!> <】」")
+        
         return
-    if(not haveStock):
-        print('很抱歉，我們的庫存不足{number}份!> <】')
-        return
-    else:
-        cart.append((product, number))
-        print(f"【{item}*{number} 已加入購物車!】")
-
+    cart.append((item, number))
+    print(f"【{item}*{number} 已加入購物車!】」")
+    
+ 
 # 【系統功能-產生商品資訊】
 def generate_product_info(page_number: int, page_size=10) -> str:
     """
@@ -179,27 +189,6 @@ def generate_product_info(page_number: int, page_size=10) -> str:
     4. 商品資訊的格式如下：
     |    商品名稱    |  售價  |   折扣  |  剩餘庫存  |        備註        |
     """
-    startIndex = (page_number - 1) * page_size
-    endIndex = startIndex + page_size
-    
-    yield "|    商品名稱    |  售價  |   折扣  |  剩餘庫存  |        備註        |"
-    yield "-"*71
-    for product in product_list[startIndex : endIndex]:
-        name = product['name']
-        price = f"{product['price']}元"
-        discount = product['discount']
-        stock = product['stock']
-        remark = product['remark']
-
-        if discount == 1:
-            discountStr = "　-"
-        elif discount * 100 % 10 == 0:
-            discountStr = f"{int(discount * 10)}折"
-        else:
-             discountStr = f"{int(discount * 100)}折"
-
-        yield f"|{name:{chr(12288)}>8}|{price:>7}|{discountStr:>8}|{stock:>12}|{remark:{chr(12288)}>10}|"   
-    yield "-"*71
     pass
 
 # 【服務功能[1]-會員註冊】
@@ -434,7 +423,6 @@ def main():
     [5] 開始買東西!
     [6] 查看購物車
 """
-
     while True:
         print(user_menu)
 
@@ -459,6 +447,7 @@ def main():
 
         elif user_input == "6":
             show_cart()
+
 
 if __name__ == "__main__":
     main()
