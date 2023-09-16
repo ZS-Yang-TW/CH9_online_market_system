@@ -1,4 +1,5 @@
 import json
+from sys import argv
 
 # 引入會員資料
 global user_data
@@ -15,7 +16,7 @@ login_status = True
 
 global cart
 cart = []
-#print(user_data)
+# print(user_data)
 # 【系統功能-檢查帳號】
 # 定义一个函数来检查用户名是否存在于用户数据中
 
@@ -88,10 +89,13 @@ def is_product(item: str) -> bool:
     """
     根據給予的商品名稱，逐項檢查是否存在於資料集中。
     """
+    return False
     for product in product_list:
         if item ==  product['name']:
             return True
     return False
+    
+    
 
 # 【系統功能-檢查商品庫存是否足夠】
 def is_sufficient(item:str, number:int) -> bool:
@@ -100,8 +104,7 @@ def is_sufficient(item:str, number:int) -> bool:
 
     註: 此函式會檢查number是否為正整數，若不是則會拋出TypeError例外。
     例外訊息為「商品數量必須為正整數」。
-    """
-    try:
+      try:
         if number <= 0:
             raise ValueError('商品數量需大於0')
         if type(number) != int:
@@ -114,6 +117,22 @@ def is_sufficient(item:str, number:int) -> bool:
     except TypeError:
         print("商品數量必須為正整數")
         return False
+    """
+    #select count() into item_count from data where item = item and number = number
+    
+    Try:
+        if type(number) != int:
+            print("請確認商品數量是否正確")
+            return
+        
+
+    
+    
+    return True
+  
+    
+    
+    
 # 【功能限制-登入後才能用的項目】
 def check_login(func):
     """
@@ -137,8 +156,25 @@ def add_to_cart(item: str, number: int):
     2. 檢查商品庫存是否足夠。如果不足，則顯示「【很抱歉，我們的庫存不足{number}份!> <】」。
     3. 如果檢查都通過，則以tuple的方式將商品及數量加入購物車串列，並顯示「【{item}*{number} 已加入購物車!】」。
     """
-    pass
 
+    if type(item)!= str:
+        print(f"{item}不是字串！")
+        return
+    if type(number) != int:
+        print(f"{number} 不是數值！")
+        return
+    if is_product(item):
+        print(f"該商品不存在")
+        return
+    
+    if is_sufficient(item , number) == False:
+        print(f"「【很抱歉，我們的庫存不足{number}份!> <】」")
+        
+        return
+    cart.append((item, number))
+    print(f"【{item}*{number} 已加入購物車!】」")
+    
+ 
 # 【系統功能-產生商品資訊】
 def generate_product_info(page_number: int, page_size=10) -> str:
     """
@@ -148,6 +184,8 @@ def generate_product_info(page_number: int, page_size=10) -> str:
     3. 商品名稱與備註的欄位，使用全形空白填滿。
     4. 商品資訊的格式如下：
     |    商品名稱    |  售價  |   折扣  |  剩餘庫存  |        備註        |
+    
+    chec
     """
     startIndex = (page_number - 1) * page_size
     endIndex = startIndex + page_size
@@ -283,3 +321,13 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
+ """   
+if __name__ == "__main__":
+   
+    add_to_cart(argv[1],int(argv[2]))
+    print("購物車內容")
+    for item , number in cart:
+        print(f"產品{item} 數量{number}")
+    # print(is_sufficient("豆漿", 0.5))
+"""
