@@ -1,5 +1,4 @@
 import json
-from sys import argv
 
 # 引入會員資料
 global user_data
@@ -41,8 +40,25 @@ def check_email(email: str):
 
 # 【系統功能-檢查電子郵件格式】
 def is_valid_email(email: str) -> bool:
+    if email.count("@") != 1:
+        return False
+    if email.startswith("@"):
+        return False
+    if email.endswith("@"):
+        return False   
+    username, domain = email.split("@")
+    if not username or not domain:
+        return False
+    if domain.count(".") != 1:
+        return False        
+    else:
+        return True
+
+# 【系統功能-檢查電子郵件格式】
+def is_valid_email(email: str) -> bool:
    pass
 
+ 
 # 【系統功能-檢查密碼安全性】
 def is_valid_password(pwd:str) -> bool:
     """
@@ -50,6 +66,7 @@ def is_valid_password(pwd:str) -> bool:
     2. 密碼需包含大小寫字母與數字。
     """
     pass
+
 
 # 【系統功能-確認密碼】
 def check_password(username:str, pwd:str) -> bool:
@@ -63,12 +80,7 @@ def is_product(item: str) -> bool:
     """
     根據給予的商品名稱，逐項檢查是否存在於資料集中。
     """
-
-    return False
-    for product in product_list:
-        if item ==  product['name']:
-            return True
-    return False
+    pass
 
 # 【系統功能-檢查商品庫存是否足夠】
 def is_sufficient(item:str, number:int) -> bool:
@@ -90,6 +102,7 @@ def check_login(func):
     如果有登入，則執行原函式；如果沒有登入，則顯示「【請先登入】」。
     """
     pass
+
 # 【系統功能-加入購物車】
 def add_to_cart(item: str, number: int):
     """
@@ -125,8 +138,6 @@ def generate_product_info(page_number: int, page_size=10) -> str:
     3. 商品名稱與備註的欄位，使用全形空白填滿。
     4. 商品資訊的格式如下：
     |    商品名稱    |  售價  |   折扣  |  剩餘庫存  |        備註        |
-    
-    chec
     """
     pass
 
